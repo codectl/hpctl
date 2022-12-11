@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "hpctl"
+version = "0.1.0"
+description = "A CLI utility tool to interact with an HPC cluster."
+authors = ["Renato Damas <me@renatodamas.com>"]
+license = "MIT"
+readme = "README.rst"
+packages = [
+    { include = "*", from = "src" }
+]
+homepage = ""
+repository = "https://github.com/rena2damas/hpctl"
+documentation = ""
+keywords = [
+    "hpctl",
+    "flask",
+    "python",
+    "python3"
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11"
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
