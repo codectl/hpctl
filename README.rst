@@ -33,6 +33,12 @@ dependencies, which is particular useful during development stage.
 
 Run 🚀
 ====
+Since it is a CLI program, the list of available operations is given by running the command:
+
+.. code-block:: bash
+
+    $ hpctl
+    > ...
 
 Tests & linting 🚥
 ===============
