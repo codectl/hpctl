@@ -32,6 +32,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
+pydantic = "^1.10.2"
 
 [tool.poetry.scripts]
 pbsreport = "hpctl:cli"
