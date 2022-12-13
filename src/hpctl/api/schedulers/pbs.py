@@ -6,38 +6,39 @@ import shell
 import tabulate
 
 from hpctl import utils
-from hpctl.schemas.pbs import NodesSchema
+from hpctl.schemas.pbs import Nodes
+from hpctl.api.schedulers.base import SchedulerBase
 
 __all__ = ("PBS", "PBSFormatter")
 
 
-class PBS:
-    def __init__(self, exec, server=None):
-        self._exec = exec
-        self.server = server
+class PBS(SchedulerBase):
 
-    def nodes(self, name="", vnodes=False, server=None, sort="name", flags=""):
-        flags = f" -s {server or self.server}"
-        flags = f"{flags} -a{' -v' if vnodes else ''}"
-        flags = f"{flags} -F json"
-        cmd = f"{self._exec}/bin/pbsnodes{flags}"
+    def nodes(self, server=None, name="", vnodes=False, sort="name", flags=""):
+        opts = f"-s {server or self.server}"
+        opts = f"{opts} -a{' -v' if vnodes else ''}"
+        opts = f"{opts} -F json"
+        if flags:
+            opts = f"{opts} {flags}"
+        cmd = f"{self._exec}/bin/pbsnodes {opts}"
 
         response = shell.Shell().run(cmd)
         if response.code != 0:
             raise shell.CommandError(response.errors(raw=True))
+
         data = json.loads(response.output(raw=True))
-        parsed_data = NodesSchema().load(data)
-        sorted_data = sorted(parsed_data, key=operator.itemgetter(sort))
+        nodes = Nodes(data)
+        sorted_nodes = sorted(nodes, key=operator.itemgetter(sort))
         return [
-            d
-            for d in sorted_data
-            if name in d["name"] and (utils.is_vnode(d["name"]) if vnodes else True)
+            x
+            for x in sorted_nodes
+            if name in x["name"] and (utils.is_vnode(x["name"]) if vnodes else True)
         ]
 
 
 class PBSFormatter:
     @classmethod
-    def nodes(cls, data: typing.List[dict], format="simple"):
+    def nodes(cls, data: typing.List[dict], fmt="simple"):
         def resource(node_data, resource_type):
             available = node_data["resources_available"][resource_type]
             assigned = node_data["resources_assigned"][resource_type]
@@ -63,23 +64,23 @@ class PBSFormatter:
             cls._truncate_row,
             [
                 [
-                    d["name"],
-                    d["queue"],
+                    x["name"],
+                    x["queue"],
                     utils.colored_line(
-                        line=d["state"], color=utils.color_state(d["state"])
+                        line=x["state"], color=utils.color_state(x["state"])
                     ),
                     resource(node_data=d, resource_type="cpus"),
                     resource(node_data=d, resource_type="gpus"),
                     resource(node_data=d, resource_type="mem"),
-                    d["cpu_type"],
-                    d["network"],
-                    d["comment"],
+                    x["cpu_type"],
+                    x["network"],
+                    x["comment"],
                 ]
-                for d in data
+                for x in data
             ],
         )
 
-        return tabulate.tabulate(table, headers=headers, tablefmt=format)
+        return tabulate.tabulate(table, headers=headers, tablefmt=fmt)
 
     @classmethod
     def _truncate_row(cls, row):
