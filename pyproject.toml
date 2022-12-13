@@ -9,7 +9,7 @@ packages = [
     { include = "*", from = "src" }
 ]
 homepage = ""
-repository = "https://github.com/rena2damas/hpctl"
+repository = "https://github.com/codectl/hpctl"
 documentation = ""
 keywords = [
     "hpctl",
