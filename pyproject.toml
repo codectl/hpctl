@@ -30,12 +30,15 @@ classifiers = [
     "Programming Language :: Python :: 3.11"
 ]
 
+[tool.poetry.scripts]
+pbsreport = "hpctl:cli"
+
 [tool.poetry.dependencies]
 pydantic = "^1.10.2"
 python = "^3.9"
 
-[tool.poetry.scripts]
-pbsreport = "hpctl:cli"
+[tool.poetry.dev-dependencies]
+pytest = "^7.2.0"
 
 [build-system]
 requires = ["poetry-core"]
